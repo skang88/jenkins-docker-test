@@ -1,20 +1,20 @@
 pipeline {
-    // 현재 폴더의 Dockerfile로 임시 에이전트를 만들고,
-    // 그 안에서 아래 stage들을 실행합니다.
-    // 이 설정은 'docker' 객체를 확실하게 활성화시킵니다.
-    agent { dockerfile true }
+    // 1. '임시 에이전트'를 만들지 않고, Jenkins 컨트롤러 자신을 에이전트로 사용
+    agent any
+
+    // 2. Docker 도구를 사용한다고 명시적으로 선언
+    tools {
+        dockerTool 'docker-tool' // Global Tool Configuration에 등록한 이름
+    }
 
     stages {
-        stage('Test Docker Command from a Docker Agent') {
+        stage('Test Docker Command on Controller') {
             steps {
                 script {
-
-                    sh "docker ps -a"
-                    echo "This step is running inside a temporary agent container."
-                    echo "Now, using the plugin's command to talk to the HOST's Docker daemon..."
-
-                    // 이 명령어는 마운트된 docker.sock을 통해
-                    // 호스트의 도커 엔진과 직접 통신합니다.
+                    echo "This test runs directly on the main Jenkins container."
+                    echo "This container has the Docker CLI and socket access."
+                    
+                    // 3. 플러그인의 고유 기능을 사용하여 호스트의 Docker와 통신
                     docker.image('hello-world').run()
                 }
             }
