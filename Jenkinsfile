@@ -8,6 +8,8 @@ pipeline {
         stage('Test Docker Command from a Docker Agent') {
             steps {
                 script {
+
+                    sh "docker ps -a"
                     echo "This step is running inside a temporary agent container."
                     echo "Now, using the plugin's command to talk to the HOST's Docker daemon..."
 
